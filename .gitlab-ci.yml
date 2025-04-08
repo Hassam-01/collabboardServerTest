@@ -1,0 +1,154 @@
+stages:
+  - build_image
+  - deploy
+
+.dev: &DEV
+  environment:
+    name: development
+  only:
+    - main
+    - merge_requests
+
+.prod: &PROD
+  environment:
+    name: production
+  only:
+    - stable
+    - merge_requests
+
+.cn:
+  before_script:
+    - cp $PROJECT_CONFIG_CHINA ./helm/files/production.yaml
+  variables:
+    HOST_NAME: $HOST_NAME_CHINA
+    KUBE_CONFIG: $KUBE_CONFIG_CHINA
+
+.sg:
+  before_script:
+    - cp $PROJECT_CONFIG_SG ./helm/files/production.yaml
+  variables:
+    HOST_NAME: $HOST_NAME_SG
+    KUBE_CONFIG: $KUBE_CONFIG_SG
+
+.docker_build: &DOCKER_BUILD
+  stage: build_image
+  image: docker:20.10.9
+  services:
+    - docker:20.10.9-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+    - docker pull $DOCKER_BUILDER_TAG || true
+    - docker build --target builder --cache-from $DOCKER_BUILDER_TAG -t $DOCKER_BUILDER_TAG -f Dockerfile .
+    - docker push $DOCKER_BUILDER_TAG
+
+    - docker pull $DOCKER_BUILDER_DEPENDENCIES_TAG || true
+    - docker build --target prod-dependencies --cache-from $DOCKER_BUILDER_TAG --cache-from $DOCKER_BUILDER_DEPENDENCIES_TAG -t $DOCKER_BUILDER_DEPENDENCIES_TAG -f Dockerfile .
+    - docker push $DOCKER_BUILDER_DEPENDENCIES_TAG
+
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_BUILDER_TAG: $CI_REGISTRY_IMAGE/flat-server:$CI_ENVIRONMENT_SLUG-cache-builder
+    DOCKER_BUILDER_DEPENDENCIES_TAG: $CI_REGISTRY_IMAGE/flat-server:$CI_ENVIRONMENT_SLUG-cache-builder-dependencies
+
+    PROD_LATEST_IMAGE_TAG: $DOCKERHUB_USERNAME/flat-server:latest
+    PROD_SHA_IMAGE_TAG: $DOCKERHUB_USERNAME/flat-server:$CI_COMMIT_SHA
+    DEV_LATEST_IMAGE_TAG: $DOCKERHUB_USERNAME/flat-server:dev-latest
+    DEV_SHA_IMAGE_TAG: $DOCKERHUB_USERNAME/flat-server:dev-$CI_COMMIT_SHA
+
+docker_build_dev:
+  <<: *DOCKER_BUILD
+  script:
+    - echo $DEV_LATEST_IMAGE_TAG
+    - echo $DEV_SHA_IMAGE_TAG
+    - docker pull $DEV_LATEST_IMAGE_TAG || true
+    - docker build --cache-from $DOCKER_BUILDER_TAG --cache-from $DOCKER_BUILDER_DEPENDENCIES_TAG --cache-from $DEV_LATEST_IMAGE_TAG -t $DEV_SHA_IMAGE_TAG -t $DEV_LATEST_IMAGE_TAG -t $PRIVATE_DOCKERHUB_REGISTRY/$DEV_LATEST_IMAGE_TAG -t $PRIVATE_DOCKERHUB_REGISTRY/$DEV_SHA_IMAGE_TAG -f Dockerfile .
+  after_script:
+    - docker push $DEV_LATEST_IMAGE_TAG
+    - docker push $DEV_SHA_IMAGE_TAG
+
+    - docker login -u $PRIVATE_DOCKERHUB_USERNAME -p $PRIVATE_DOCKERHUB_PASSWORD $PRIVATE_DOCKERHUB_REGISTRY
+    - docker push $PRIVATE_DOCKERHUB_REGISTRY/$DEV_LATEST_IMAGE_TAG
+    - docker push $PRIVATE_DOCKERHUB_REGISTRY/$DEV_SHA_IMAGE_TAG
+  <<: *DEV
+
+docker_build_prod:
+  <<: *DOCKER_BUILD
+  script:
+    - docker pull $PROD_LATEST_IMAGE_TAG || true
+    - docker build --cache-from $DOCKER_BUILDER_TAG --cache-from $DOCKER_BUILDER_DEPENDENCIES_TAG --cache-from $PROD_LATEST_IMAGE_TAG -t $PROD_SHA_IMAGE_TAG -t $PROD_LATEST_IMAGE_TAG -t $PRIVATE_DOCKERHUB_REGISTRY/$PROD_LATEST_IMAGE_TAG -t $PRIVATE_DOCKERHUB_REGISTRY/$PROD_SHA_IMAGE_TAG -f Dockerfile .
+  after_script:
+    - docker push $PROD_LATEST_IMAGE_TAG
+    - docker push $PROD_SHA_IMAGE_TAG
+
+    - docker login -u $PRIVATE_DOCKERHUB_USERNAME -p $PRIVATE_DOCKERHUB_PASSWORD $PRIVATE_DOCKERHUB_REGISTRY
+    - docker push $PRIVATE_DOCKERHUB_REGISTRY/$PROD_LATEST_IMAGE_TAG
+    - docker push $PRIVATE_DOCKERHUB_REGISTRY/$PROD_SHA_IMAGE_TAG
+  <<: *PROD
+
+.deploy: &DEPLOY
+  stage: deploy
+  image: dtzar/helm-kubectl
+  script:
+    - mkdir ~/.kube
+    - echo "$KUBE_CONFIG" > ~/.kube/config
+
+    - export IMAGE_REPO="$PRIVATE_DOCKERHUB_REGISTRY/$DOCKERHUB_USERNAME/flat-server"
+
+    - export VALUES=`envsubst < ./helm/values.yaml`
+    - echo "$VALUES" > ./helm/values.yaml
+
+    # link: https://github.com/stakater/Reloader
+    - |
+      export DEPLOYED_RELOADER=$(helm ls --namespace $KUBE_NAMESPACE | grep "stakater-reloader" | wc -l)
+      if [ $DEPLOYED_RELOADER -eq 0 ]; then
+        helm repo add stakater https://stakater.github.io/stakater-charts
+        helm repo update
+        helm install stakater-reloader stakater/reloader --set reloader.watchGlobally=false --namespace $KUBE_NAMESPACE
+      fi
+
+    - helm upgrade --install $HELM_NAME helm --namespace $KUBE_NAMESPACE --set replicaCount=$REPLICA_COUNT
+
+deploy_dev_cn:
+  <<: *DEPLOY
+  variables:
+    DOCKER_TAG: dev-$CI_COMMIT_SHA
+    KUBE_NAMESPACE: default
+    REPLICA_COUNT: 2
+    HELM_NAME: flat-server-development
+  extends: .cn
+  <<: *DEV
+
+deploy_dev_sg:
+  <<: *DEPLOY
+  extends: .sg
+  variables:
+    DOCKER_TAG: dev-$CI_COMMIT_SHA
+    KUBE_NAMESPACE: sg
+    REPLICA_COUNT: 2
+    HELM_NAME: flat-server-sg-development
+  <<: *DEV
+
+deploy_prod_cn:
+  <<: *DEPLOY
+  extends: .cn
+  variables:
+    DOCKER_TAG: $CI_COMMIT_SHA
+    KUBE_NAMESPACE: default
+    REPLICA_COUNT: 3
+    HELM_NAME: flat-server-production
+  <<: *PROD
+  when: manual
+
+deploy_prod_sg:
+  <<: *DEPLOY
+  extends: .sg
+  variables:
+    DOCKER_TAG: $CI_COMMIT_SHA
+    KUBE_NAMESPACE: default
+    REPLICA_COUNT: 3
+    HELM_NAME: flat-server-production
+  <<: *PROD
+  when: manual

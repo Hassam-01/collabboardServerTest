@@ -1,0 +1,231 @@
+server:
+  port: 80
+  env: dev
+
+redis:
+  host:
+  port:
+  username:
+  password:
+  db:
+  queueDB:
+
+mysql:
+  host:
+  port:
+  username:
+  password:
+  db:
+
+jwt:
+  secret:
+  algorithms:
+
+website: https://flat-web-dev.whiteboard.agora.io
+
+default_avatar: https://flat-storage.oss-cn-hangzhou.aliyuncs.com/flat-resources/avatar/[index].png
+
+# flag see: https://github.com/netless-io/flat-server/blob/main/src/utils/EnvVariable.ts
+log:
+  pathname: "{{PROJECT_DIR}}/logs"
+  filename: "{{DAY_DATE}}"
+
+cloud_storage:
+  # upload concurrent (default: 3)
+  concurrent: 3
+  # default: 500M
+  single_file_size: 524288000
+  # default: 2G
+  total_size: 2147483648
+  # storage service prefix path (default: cloud-storage)
+  prefix_path: cloud-storage
+  allow_file_suffix:
+    - ppt
+    - pptx
+    - doc
+    - docx
+    - pdf
+    - png
+    - jpg
+    - jpeg
+    - gif
+    - mp3
+    - mp4
+  temp_photo:
+    # max single file size: 5M
+    single_file_size: 5242880
+    # max files per day per user: 60
+    total_files: 60
+    prefix_path: cloud-storage/temp-photo
+    allow_suffix:
+      - png
+      - jpg
+      - jpeg
+
+user:
+  avatar:
+    # 5M
+    size: 5242880
+    allow_suffix:
+      - png
+      - jpg
+      - jpeg
+
+oauth:
+  logo:
+    prefix_path: oauth-logo
+    size: 5242880
+    allow_suffix:
+      - png
+      - jpg
+      - jpeg
+
+login:
+  salt:
+  wechat:
+    web:
+      enable: false
+      app_id:
+      app_secret:
+    mobile:
+      enable: false
+      app_id:
+      app_secret:
+  github:
+    enable: false
+    client_id:
+    client_secret:
+  google:
+    enable: false
+    client_id:
+    client_secret:
+    redirect_uri:
+      login:
+      bind:
+  apple:
+    enable: false
+  agora:
+    enable: false
+    client_id:
+    client_secret:
+  sms:
+    enable: false
+    force: false
+    test_users:
+      - phone:
+        code:
+    chinese_mainland:
+      access_id:
+      access_secret:
+      template_code:
+      sign_name:
+    # hmt(Hong Kong, Macao and Taiwan regions of China)
+    hmt:
+      access_id:
+      access_secret:
+      template_code:
+      sign_name:
+    global:
+      access_id:
+      access_secret:
+      template_code:
+      sign_name:
+  email:
+    enable: true
+    test_emails:
+      - email:
+        code:
+    type: smtp
+    smtp:
+      host: smtpdm.aliyun.com
+      port: 465
+      secure: true
+      auth:
+        user:
+        pass:
+    aliCloud:
+      access_id:
+      access_secret:
+      account_name: test@test.test
+
+apple:
+  app_id: 48TB6ZZL5S.io.agora.flat
+
+agora:
+  app:
+    id:
+    certificate:
+  restful:
+    id:
+    secret:
+  oss:
+    access_id:
+    access_secret:
+    vendor:
+    region:
+    bucket:
+    folder:
+    prefix:
+  screenshot:
+    enable: false
+    oss:
+      access_id:
+      access_secret:
+      vendor:
+      region:
+      bucket:
+      folder:
+      prefix:
+  messageNotification:
+    enable: false
+    events:
+      - productID:
+        eventType:
+        secret:
+  ai:
+    server_cn: "http://43.131.39.44:8082"
+    server_en: "http://43.131.39.44:8081"
+
+whiteboard:
+  app_id:
+  access_key:
+  secret_access_key:
+  region:
+  convert_region:
+
+storage_service:
+  type: oss
+  oss:
+    access_key:
+    secret_key:
+    endpoint:
+    bucket:
+    region:
+
+censorship:
+  video:
+    enable: false
+    type: aliCloud
+    aliCloud:
+      uid:
+      access_id:
+      access_secret:
+      endpoint:
+  voice:
+    enable: false
+    type: aliCloud
+    aliCloud:
+      uid:
+      access_id:
+      access_secret:
+      callback_address:
+  text:
+    enable: false
+    type: aliCloud
+    aliCloud:
+      access_id:
+      access_secret:
+      endpoint:
+
+admin:
+  secret:

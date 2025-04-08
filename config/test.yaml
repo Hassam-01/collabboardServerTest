@@ -1,0 +1,225 @@
+server:
+  port: 8761
+  env: dev
+  region: CN
+  region_code: 1
+
+redis:
+  host: 127.0.0.1
+  port: 7528
+  username:
+  password: flat-server-test
+  db: 0
+  queueDB: 1
+
+mysql:
+  host: 127.0.0.1
+  port: 7519
+  username: root
+  password: flat-server-test
+  db: flat_server
+
+jwt:
+  secret: test
+  algorithms: HS256
+
+website: https://flat-web-dev.whiteboard.agora.io
+
+default_avatar: https://flat-storage.oss-cn-hangzhou.aliyuncs.com/flat-resources/avatar/[index].png
+
+log:
+  pathname: "{{PROJECT_DIR}}/logs"
+  filename: "{{DAY_DATE}}"
+
+cloud_storage:
+  concurrent: 3
+  single_file_size: 524288000
+  total_size: 2147483648
+  prefix_path: cloud-storage
+  allow_file_suffix:
+    - ppt
+    - pptx
+    - doc
+    - docx
+    - pdf
+    - png
+    - jpg
+    - jpeg
+    - gif
+    - mp3
+    - mp4
+  temp_photo:
+    single_file_size: 5242880
+    total_files: 60
+    prefix_path: cloud-storage/temp-photo
+    allow_suffix:
+      - png
+      - jpg
+      - jpeg
+
+user:
+  avatar:
+    # 5M
+    size: 5242880
+    allow_suffix:
+      - png
+      - jpg
+      - jpeg
+
+oauth:
+  logo:
+    prefix_path: oauth-logo
+    size: 5242880
+    allow_suffix:
+      - png
+      - jpg
+      - jpeg
+
+login:
+  salt: test
+  wechat:
+    web:
+      enable: true
+      app_id:
+      app_secret:
+    mobile:
+      enable: true
+      app_id:
+      app_secret:
+  github:
+    enable: true
+    client_id:
+    client_secret:
+  google:
+    enable: true
+    client_id:
+    client_secret:
+    redirect_uri:
+      login:
+      bind:
+  apple:
+    enable: true
+  agora:
+    enable: true
+    client_id:
+    client_secret:
+  sms:
+    enable: true
+    force: false
+    test_users:
+      - phone:
+        code:
+    chinese_mainland:
+      access_id:
+      access_secret:
+      template_code:
+      sign_name:
+    # hmt(Hong Kong, Macao and Taiwan regions of China)
+    hmt:
+      access_id:
+      access_secret:
+      template_code:
+      sign_name:
+    global:
+      access_id:
+      access_secret:
+      template_code:
+      sign_name:
+  email:
+    enable: true
+    test_emails:
+      - email:
+        code:
+    type: smtp
+    smtp:
+      host: smtpdm.aliyun.com
+      port: 465
+      secure: true
+      auth:
+        user:
+        pass:
+    aliCloud:
+      access_id:
+      access_secret:
+      account_name: test@test.test
+
+apple:
+  app_id: 48TB6ZZL5S.io.agora.flat
+
+agora:
+  app:
+    id:
+    certificate:
+  restful:
+    id:
+    secret:
+  oss:
+    access_id:
+    access_secret:
+    vendor:
+    region:
+    bucket:
+    folder:
+    prefix:
+  screenshot:
+    enable:
+    oss:
+      access_id:
+      access_secret:
+      vendor:
+      region:
+      bucket:
+      folder:
+      prefix:
+  messageNotification:
+    enable: false
+    events:
+      - productID:
+        eventType:
+        secret:
+  ai:
+    server: "http://106.13.114.185:8081"
+
+whiteboard:
+  app_id: "test/flat-server"
+  access_key: "test"
+  secret_access_key: "test"
+  region: "cn-hz"
+  convert_region: "cn-hz"
+
+storage_service:
+  type: oss
+  oss:
+    access_key: test
+    secret_key: test
+    endpoint: test
+    bucket: test
+    region: test
+
+censorship:
+  video:
+    enable: true
+    type: aliCloud
+    aliCloud:
+      uid: test
+      access_id: test
+      access_secret: test
+      endpoint: green.cn-shanghai.aliyuncs.com
+  voice:
+    enable: false
+    type: aliCloud
+    aliCloud:
+      uid:
+      access_id:
+      access_secret:
+      callback_address:
+  text:
+    enable: true
+    type: aliCloud
+    aliCloud:
+      access_id: test
+      access_secret: test
+      endpoint: green.cn-shanghai.aliyuncs.com
+
+admin:
+  secret:
