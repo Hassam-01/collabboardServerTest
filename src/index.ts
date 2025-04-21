@@ -89,14 +89,15 @@ void orm().then(async dataSource => {
         }),
         app.register(fastifyAuthenticate),
         app.register(cors, {
+            origin: true,
             methods: ["GET", "POST", "OPTIONS"],
             allowedHeaders: ["Content-Type", "Authorization", "x-request-id", "x-session-id"],
             maxAge: 100,
+            preflightContinue: false,
         }),
         app.register(formBody),
         app.register(fastifyRequestID),
     ]);
-
     {
         const respErr = JSON.stringify({
             status: Status.Failed,

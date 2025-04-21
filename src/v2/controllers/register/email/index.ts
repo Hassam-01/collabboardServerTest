@@ -27,19 +27,16 @@ export const registerEmail = async (
     reply: FastifyReply,
 ): Promise<Response<EmailRegisterReturn>> => {
     const service = new UserEmailService(req.ids, req.DBTransaction);
-
     const jwtSign = (userUUID: string): Promise<string> =>
         reply.jwtSign({
             userUUID,
             loginSource: LoginPlatform.Email,
         });
-
     const result = await service.register(
         req.body.email,
         req.body.code,
         req.body.password,
         jwtSign,
     );
-
     return successJSON(result);
 };

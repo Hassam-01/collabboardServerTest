@@ -14,7 +14,8 @@ export class AliOSSService extends OSSAbstract {
         ids: this.ids,
     });
 
-    public readonly domain = `https://${StorageService.oss.bucket}.${StorageService.oss.endpoint}`;
+    // public readonly domain = `http://${StorageService.oss.bucket}.${StorageService.oss.endpoint}`;
+    public readonly domain = `http://${StorageService.oss.endpoint}`;
 
     public constructor(private readonly ids: IDS) {
         super();
@@ -167,3 +168,240 @@ export class AliOSSService extends OSSAbstract {
         return `attachment; filename="${encodeFileName}"; filename*=UTF-8''${encodeFileName}`;
     }
 }
+
+// import {
+//     S3Client,
+//     HeadObjectCommand,
+//     DeleteObjectCommand,
+//     DeleteObjectsCommand,
+//     ListObjectsV2Command,
+//     CopyObjectCommand,
+//     PutObjectCommand,
+//     GetObjectCommand,
+//   } from "@aws-sdk/client-s3";
+//   import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+//   import path from "path";
+//   import { StorageService } from "../../../constants/Config";
+//   import { createLoggerService } from "../../../logger";
+//   import { addMinutes } from "date-fns/fp";
+//   import crypto from "crypto";
+//   import { FError } from "../../../error/ControllerError";
+//   import { ErrorCode } from "../../../ErrorCode";
+//   import { OSSAbstract } from "../../service-locator/service/oss-abstract";
+// //   import { IDS } from "../../../types/IDS";
+  
+//   export class S3StorageService extends OSSAbstract {
+//     private readonly logger = createLoggerService<"S3Storage">({
+//       serviceName: "S3Storage",
+//       ids: this.ids,
+//     });
+  
+//     private readonly s3Client: S3Client;
+//     public readonly domain: string;
+  
+//     public constructor(private readonly ids: IDS) {
+//       super();
+//       this.s3Client = new S3Client({
+//         region: StorageService.oss.region,
+//         endpoint: StorageService.oss.endpoint,
+//         credentials: {
+//           accessKeyId: StorageService.oss.accessKey,
+//           secretAccessKey: StorageService.oss.accessKeySecret, 
+//         },
+//         forcePathStyle: true, // Required for MinIO
+//       });
+//       this.domain = StorageService.oss.endpoint;
+//     }
+  
+//     public async exists(filePath: string): Promise<boolean> {
+//       try {
+//         await this.s3Client.send(
+//           new HeadObjectCommand({
+//             Bucket: StorageService.oss.bucket,
+//             Key: filePath,
+//           })
+//         );
+//         return true;
+//       } catch (error) {
+//         if ((error as { name: string }).name === "NotFound") {
+//           return false;
+//         }
+//         throw error;
+//       }
+//     }
+  
+//     public async assertExists(filePath: string): Promise<void> {
+//       const exists = await this.exists(filePath);
+//       if (!exists) {
+//         this.logger.info("file not found in storage", {
+//           S3Storage: {
+//             filePath,
+//           },
+//         });
+//         throw new FError(ErrorCode.FileNotFound);
+//       }
+//     }
+  
+//     public async remove(fileList: string | string[]): Promise<void> {
+//       const filesToDelete = Array.isArray(fileList) ? fileList : [fileList];
+  
+//       this.logger.debug("removing files", {
+//         S3Storage: {
+//           files: filesToDelete.join(", "),
+//         },
+//       });
+  
+//       if (filesToDelete.length === 1) {
+//         await this.s3Client.send(
+//           new DeleteObjectCommand({
+//             Bucket: StorageService.oss.bucket,
+//             Key: filesToDelete[0],
+//           })
+//         );
+//       } else {
+//         await this.s3Client.send(
+//           new DeleteObjectsCommand({
+//             Bucket: StorageService.oss.bucket,
+//             Delete: {
+//               Objects: filesToDelete.map((Key) => ({ Key })),
+//               Quiet: true,
+//             },
+//           })
+//         );
+//       }
+  
+//       // Handle directory cleanup if needed
+//       const directoriesToCheck = new Set<string>();
+//       for (const filePath of filesToDelete) {
+//         const dir = path.dirname(filePath);
+//         if (dir !== ".") {
+//           directoriesToCheck.add(dir);
+//         }
+//       }
+  
+//       for (const directory of directoriesToCheck) {
+//         await this.cleanupEmptyDirectory(directory);
+//       }
+//     }
+  
+//     private async cleanupEmptyDirectory(directory: string): Promise<void> {
+//       try {
+//         const { Contents } = await this.s3Client.send(
+//           new ListObjectsV2Command({
+//             Bucket: StorageService.oss.bucket,
+//             Prefix: directory + "/",
+//             MaxKeys: 1,
+//           })
+//         );
+  
+//         if (!Contents || Contents.length === 0) {
+//           await this.s3Client.send(
+//             new DeleteObjectCommand({
+//               Bucket: StorageService.oss.bucket,
+//               Key: directory + "/",
+//             })
+//           );
+//           this.logger.debug("removed empty directory", {
+//             S3Storage: {
+//               directory,
+//             },
+//           });
+//         }
+//       } catch (error) {
+//         this.logger.error("failed to check/clean directory", {
+//           S3Storage: {
+//             directory,
+//             error: (error as Error).message,
+//           },
+//         });
+//       }
+//     }
+  
+//     public async rename(filePath: string, newFileName: string): Promise<void> {
+//       const newKey = filePath; // Same path, just updating metadata
+//       const copySource = `/${StorageService.oss.bucket}/${filePath}`;
+  
+//       await this.s3Client.send(
+//         new CopyObjectCommand({
+//           Bucket: StorageService.oss.bucket,
+//           CopySource: copySource,
+//           Key: newKey,
+//           MetadataDirective: "REPLACE",
+//           ContentDisposition: S3StorageService.toDispositionFileNameEncode(
+//             newFileName
+//           ),
+//         })
+//       );
+//     }
+  
+//     public async getFileURL(filePath: string, expiresInMinutes = 60): Promise<string> {
+//       const command = new GetObjectCommand({
+//         Bucket: StorageService.oss.bucket,
+//         Key: filePath,
+//         ResponseContentDisposition: S3StorageService.toDispositionFileNameEncode(
+//           path.basename(filePath)
+//         ),
+//       });
+  
+//       return getSignedUrl(this.s3Client, command, {
+//         expiresIn: expiresInMinutes * 60,
+//       });
+//     }
+  
+//     public async putFile(
+//       filePath: string,
+//       fileContent: Buffer | string,
+//       fileName: string
+//     ): Promise<void> {
+//       await this.s3Client.send(
+//         new PutObjectCommand({
+//           Bucket: StorageService.oss.bucket,
+//           Key: filePath,
+//           Body: fileContent,
+//           ContentDisposition: S3StorageService.toDispositionFileNameEncode(fileName),
+//         })
+//       );
+//     }
+  
+//     public policyTemplate(
+//       fileName: string,
+//       filePath: string,
+//       fileSize: number,
+//       expirationMinutes = 120
+//     ): {
+//       policy: string;
+//       signature: string;
+//     } {
+//       const expirationDate = addMinutes(expirationMinutes)(new Date());
+//       const policy = {
+//         expiration: expirationDate.toISOString(),
+//         conditions: [
+//           { bucket: StorageService.oss.bucket },
+//           ["content-length-range", fileSize, fileSize],
+//           ["eq", "$key", filePath],
+//           [
+//             "eq",
+//             "$Content-Disposition",
+//             S3StorageService.toDispositionFileNameEncode(fileName),
+//           ],
+//         ],
+//       };
+  
+//       const policyString = JSON.stringify(policy);
+//       const policyBase64 = Buffer.from(policyString).toString("base64");
+//       const signature = crypto
+//         .createHmac("sha1", StorageService.oss.accessKeySecret)
+//         .update(policyBase64)
+//         .digest("base64");
+  
+//       return {
+//         policy: policyBase64,
+//         signature,
+//       };
+//     }
+  
+//     private static toDispositionFileNameEncode(str: string): string {
+//       const encodeFileName = encodeURIComponent(str);
+//       return `attachment; filename="${encodeFileName}"; filename*=UTF-8''${encodeFileName}`;
+//     }
+//   }

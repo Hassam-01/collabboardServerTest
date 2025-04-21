@@ -30,7 +30,7 @@ export const loginPhone = async (
             userUUID,
             loginSource: LoginPlatform.Phone,
         });
-
+        console.log("loginPhone", req.body.phone, req.body.password);
     const result = await service.login(req.body.phone, req.body.password, jwtSign);
 
     return successJSON(result);

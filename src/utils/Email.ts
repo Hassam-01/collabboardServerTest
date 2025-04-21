@@ -112,9 +112,11 @@ function createSMTPTransport(): EmailClient {
 
 function createEmailClient(): EmailClient {
     if (EmailSMS.type === "smtp") {
+        console.log("create SMTP transport", EmailSMS.smtp.host, EmailSMS.smtp.port);
         return createSMTPTransport();
     }
     if (EmailSMS.type === "aliCloud") {
+        console.log("create aliCloud transport", EmailSMS.aliCloud.accountName);
         return createAliCloudClient();
     }
     throw new Error(`unknown email type: ${EmailSMS.type}`);

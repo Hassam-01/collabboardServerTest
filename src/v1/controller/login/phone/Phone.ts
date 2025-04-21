@@ -88,6 +88,7 @@ export class PhoneLogin extends AbstractController<RequestType, ResponseType> {
 
     private static async assertCodeCorrect(safePhone: string, code: number): Promise<void> {
         if (Server.env === "dev") {
+            console.log("dev mode, skip code check");
             for (const user of PhoneSMS.testUsers) {
                 if (user.phone === safePhone && user.code === code) {
                     return;

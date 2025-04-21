@@ -31,7 +31,9 @@ export const getFilePath = (fileName: string, fileUUID: string): string => {
 };
 
 export const getOSSDomain = (): string => {
-    return `https://${StorageService.oss.bucket}.${StorageService.oss.endpoint}`;
+    // return `https://${StorageService.oss.endpoint}`;
+    console.log("StorageService.oss.endpoint", StorageService.oss.endpoint);
+    return `http://${StorageService.oss.endpoint}`;
 };
 
 export const getOSSFileURLPath = (filePath: string): string => {

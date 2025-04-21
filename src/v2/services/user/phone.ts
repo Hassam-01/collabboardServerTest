@@ -191,6 +191,7 @@ export class UserPhoneService {
         }
 
         if (user.user_password !== password) {
+            console.log("login phone user password incorrect user password: ", password, user.user_password);
             this.logger.info("login phone user password incorrect", {
                 userPhone: { phone, userUUIDByPhone },
             });

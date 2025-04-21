@@ -14,7 +14,7 @@ export class GenerateRTM extends AbstractController<RequestType, ResponseType> {
 
     public async execute(): Promise<Response<ResponseType>> {
         const token = await getRTMToken(this.userUUID);
-
+        console.log("RTM Token from execute: ", token);
         return {
             status: Status.Success,
             data: {

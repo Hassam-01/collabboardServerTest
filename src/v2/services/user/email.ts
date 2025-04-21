@@ -11,7 +11,7 @@ import { hash } from "../../../utils/Hash";
 import { RedisKey } from "../../../utils/Redis";
 import { MessageExpirationSecond, MessageIntervalSecond } from "../../constants";
 import { userDAO, userEmailDAO, userPhoneDAO } from "../../dao";
-import { setGuidePPTX } from "./utils";
+// import { setGuidePPTX } from "./utils";
 import { generateAvatar } from "../../../utils/Avatar";
 
 export class UserEmailService {
@@ -91,7 +91,6 @@ export class UserEmailService {
         jwtSign: (userUUID: string) => Promise<string>,
     ): Promise<EmailRegisterReturn> {
         password = hash(password);
-
         await UserEmailService.notExhaustiveAttack(email);
         await UserEmailService.assertCodeCorrect(email, code);
         await UserEmailService.clearTryRegisterCount(email);
@@ -106,21 +105,20 @@ export class UserEmailService {
         const userName = email.split("@")[0];
         const avatarURL = generateAvatar(userUUID);
 
-        const createUser = userDAO.insert(this.DBTransaction, {
-            user_name: userName,
-            user_uuid: userUUID,
-            avatar_url: avatarURL,
-            user_password: password,
-        });
+        // const createUser = userDAO.insert(this.DBTransaction, {
+        //     user_name: userName,
+        //     user_uuid: userUUID,
+        //     avatar_url: avatarURL,
+        //     user_password: password,
+        // });
+        // const createUserEmail = userEmailDAO.insert(this.DBTransaction, {
+        //     user_uuid: userUUID,
+        //     user_email: email,
+        // });
 
-        const createUserEmail = userEmailDAO.insert(this.DBTransaction, {
-            user_uuid: userUUID,
-            user_email: email,
-        });
+        // const setupGuidePPTX = setGuidePPTX(this.DBTransaction, userUUID);
 
-        const setupGuidePPTX = setGuidePPTX(this.DBTransaction, userUUID);
-
-        await Promise.all([createUser, createUserEmail, setupGuidePPTX]);
+        // await Promise.all([createUser, createUserEmail, setupGuidePPTX]);
 
         const result: EmailRegisterReturn = {
             name: userName,
@@ -267,11 +265,10 @@ export class UserEmailService {
             await RedisService.expire(key, 60 * 10);
         }
     }
-
+    
     private static async clearTryRegisterCount(email: string): Promise<void> {
         await RedisService.del(RedisKey.emailTryRegisterOrResetCount(email));
     }
-
     private static async clearVerificationCode(email: string): Promise<void> {
         await RedisService.del(RedisKey.emailRegisterOrReset(email));
     }

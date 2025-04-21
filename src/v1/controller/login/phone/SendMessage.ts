@@ -33,9 +33,8 @@ export class SendMessage extends AbstractController<RequestType, ResponseType> {
     public async execute(): Promise<Response<ResponseType>> {
         const { phone } = this.body;
         const sms = new SMS(phone);
-
         const safePhone = SMSUtils.safePhone(phone);
-
+        
         if (await SendMessage.canSend(safePhone)) {
             const success = await sms.send();
             if (!success) {
