@@ -212,14 +212,6 @@ storage_service:
     cname: false
     # path_style: true 
 
-# storage_service:
-#   type: oss
-#   oss:
-#     access_key: "LTAI5tCR12974x9jSFrr95hT"
-#     secret_key: "FVG6cLjpUnRM96dIqc4xgNhg0DALxn"
-#     endpoint: oss-cn-beijing.aliyuncs.com 
-#     bucket: flat
-#     region: China Beijing
 censorship:
   video:
     enable: false
