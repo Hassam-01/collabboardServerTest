@@ -103,7 +103,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 .idea/
-config/.env.*.local
+config/
 certificate/*
 !certificate/.gitkeep
 config/*.yaml
