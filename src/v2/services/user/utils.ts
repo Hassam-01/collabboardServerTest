@@ -11,7 +11,7 @@ import { getDisposition, ossClient } from "../../../v1/controller/cloudStorage/a
 import { cloudStorageConfigsDAO, cloudStorageFilesDAO, cloudStorageUserFilesDAO } from "../../dao";
 
 export async function setGuidePPTX(t: EntityManager, userUUID: string): Promise<void> {
-    const CN = Whiteboard.convertRegion === "cn-hz";
+    const CN = Whiteboard.convertRegion === "sg"; // changed from cn-hz to sg
 
     const fileUUID = v4();
     const name = CN ? "开始使用 Flat.pptx" : "Get Started with Flat.pptx";

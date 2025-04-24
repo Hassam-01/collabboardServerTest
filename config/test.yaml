@@ -184,9 +184,8 @@ whiteboard:
   app_id: "test/flat-server"
   access_key: "test"
   secret_access_key: "test"
-  region: "cn-hz"
-  convert_region: "cn-hz"
-
+  region: "sg"
+  convert_region: "sg
 storage_service:
   type: oss
   oss:

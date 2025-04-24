@@ -25,7 +25,7 @@ export enum Gender {
 }
 
 export enum Region {
-    CN_HZ = "cn-hz",
+    CN_HZ = "cn-hz", // changed from cn-hz to sg
     US_SV = "us-sv",
     SG = "sg",
     IN_MUM = "in-mum",

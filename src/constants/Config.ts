@@ -9,7 +9,7 @@ export const Server = {
     name: "flat-server",
     version: packages.version,
     env: config.server.env,
-    region: config.server.region || "CN",
+    region: config.server.region || "SG",
     // value: 1-9
     regionCode: config.server.region_code || 1,
     joinEarly: config.server.join_early || 5,

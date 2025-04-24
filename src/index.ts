@@ -22,8 +22,12 @@ import fastifyTypeORMQueryRunner from "@fastify-userland/typeorm-query-runner";
 import { fastifyAPILogger } from "./plugins/fastify/api-logger";
 import { initTasks } from "./v2/tasks";
 import { fastifyAuthenticate } from "./plugins/fastify/authenticate";
-
+// import fs from "fs";
 const app = fastify({
+    // https: {
+    //     key: fs.readFileSync("C:/Windows/System32/cert.key"),
+    //     cert: fs.readFileSync("C:/Windows/System32/cert.crt"),
+    // },
     caseSensitive: true,
     ajv: {
         plugins: [ajvTypeBoxPlugin, ajvSelfPlugin],

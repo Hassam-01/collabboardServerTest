@@ -105,16 +105,18 @@ export class UserEmailService {
         const userName = email.split("@")[0];
         const avatarURL = generateAvatar(userUUID);
 
-        // const createUser = userDAO.insert(this.DBTransaction, {
-        //     user_name: userName,
-        //     user_uuid: userUUID,
-        //     avatar_url: avatarURL,
-        //     user_password: password,
-        // });
-        // const createUserEmail = userEmailDAO.insert(this.DBTransaction, {
-        //     user_uuid: userUUID,
-        //     user_email: email,
-        // });
+        // to setup guide pptx use " const createUser = " with the userDAO.insert below 
+        userDAO.insert(this.DBTransaction, {
+            user_name: userName,
+            user_uuid: userUUID,
+            avatar_url: avatarURL,
+            user_password: password,
+        });
+        // to setup guide pptx use " const createUserEmail = " with the userEmailDAO.insert below 
+        userEmailDAO.insert(this.DBTransaction, {
+            user_uuid: userUUID,
+            user_email: email,
+        });
 
         // const setupGuidePPTX = setGuidePPTX(this.DBTransaction, userUUID);
 
