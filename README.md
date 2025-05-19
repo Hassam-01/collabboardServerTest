@@ -1,22 +1,3 @@
-# Agora Flat Server
-
-Project flat-server is a `Node.js` server for the [Agora Flat](https://github.com/netless-io/flat) open source
-classroom.
-
-[中文](https://github.com/netless-io/flat-server/blob/main/README-zh.md)
-
-## Features
-
-- Login via
-- [x] Wechat
-- [x] Github
-- [x] Google
-- Room scheduling
-    - [x] Ordinary rooms
-    - [x] Periodic rooms
-- [x] Signing tokens for Whiteboard, Real-time video/audio chat(RTC), Real-time messaging(RTM)
-- [x] Cloud recording and replaying
-- [x] Cloud Storage for multi-media courseware
 
 ## Develop Locally
 
