@@ -110,3 +110,4 @@ config/*.yaml
 !config/defaults.yaml
 !config/test.yaml
 scripts/migration/*/.env.yaml
+development.local.yaml
