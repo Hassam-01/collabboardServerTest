@@ -30,7 +30,8 @@ export const policyTemplate = (
         expiration: addMinutes(expiration)(new Date()).toISOString(),
         conditions: [
             {
-                bucket: StorageService.oss.bucket,
+                // bucket: StorageService.oss.bucket,
+                bucket: StorageService.s3.bucket,
             },
             ["content-length-range", fileSize, fileSize],
             ["eq", "$key", filePath],
@@ -40,7 +41,8 @@ export const policyTemplate = (
 
     const policy = Buffer.from(policyString).toString("base64");
     const signature = crypto
-        .createHmac("sha1", StorageService.oss.accessKeySecret)
+        // .createHmac("sha1", StorageService.oss.accessKeySecret)
+        .createHmac("sha1", StorageService.s3.accessKeySecret)
         .update(policy)
         .digest("base64");
 
@@ -50,12 +52,20 @@ export const policyTemplate = (
     };
 };
 
+// export const ossClient = new OSS({
+//     bucket: StorageService.oss.bucket,
+//     region: StorageService.oss.region,
+//     endpoint: StorageService.oss.endpoint,
+//     accessKeyId: StorageService.oss.accessKey,
+//     accessKeySecret: StorageService.oss.accessKeySecret,
+//     secure: true,
+// });
 export const ossClient = new OSS({
-    bucket: StorageService.oss.bucket,
-    region: StorageService.oss.region,
-    endpoint: StorageService.oss.endpoint,
-    accessKeyId: StorageService.oss.accessKey,
-    accessKeySecret: StorageService.oss.accessKeySecret,
+    bucket: StorageService.s3.bucket,
+    region: StorageService.s3.region,
+    // endpoint: StorageService.s3.endpoint,
+    accessKeyId: StorageService.s3.accessKey,
+    accessKeySecret: StorageService.s3.accessKeySecret,
     secure: true,
 });
 

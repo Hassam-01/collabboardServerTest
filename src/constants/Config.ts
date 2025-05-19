@@ -107,6 +107,13 @@ export const PhoneSMS = {
     },
 };
 
+export const AWS_S3 = {
+    accessKeyId: config.aws.accessKeyId,
+    secretAccessKey: config.aws.secretAccessKey,
+    region: config.aws.region,
+    bucket: config.aws.bucket,
+}
+
 export const EmailSMS = {
     enable: config.login.email.enable,
     testEmails: config.login.email.test_emails.map(user => {
@@ -125,6 +132,7 @@ export const EmailSMS = {
         host: config.login.email.smtp.host,
         port: config.login.email.smtp.port,
         secure: config.login.email.smtp.secure,
+        from: config.login.email.smtp.from,
         auth: {
             user: config.login.email.smtp.auth.user,
             pass: config.login.email.smtp.auth.pass,
@@ -195,15 +203,32 @@ export const CloudStorage = {
     },
 };
 
+// export const StorageService = {
+//     type: config.storage_service.type,
+//     oss: {
+//         bucket: config.storage_service.oss.bucket,
+//         region: config.storage_service.oss.region,
+//         accessKey: config.storage_service.oss.access_key,
+//         accessKeySecret: config.storage_service.oss.secret_key,
+//         endpoint: config.storage_service.oss.endpoint,
+//     },
+// };
 export const StorageService = {
     type: config.storage_service.type,
-    oss: {
-        bucket: config.storage_service.oss.bucket,
-        region: config.storage_service.oss.region,
-        accessKey: config.storage_service.oss.access_key,
-        accessKeySecret: config.storage_service.oss.secret_key,
-        endpoint: config.storage_service.oss.endpoint,
+    s3: {
+        bucket: config.storage_service.s3.bucket,
+        region: config.storage_service.s3.region,
+        accessKey: config.storage_service.s3.accessKey,
+        accessKeySecret: config.storage_service.s3.secretKey,
+        // endpoint: config.storage_service.oss.endpoint,
     },
+    // oss: {
+    //     bucket: config.storage_service.oss.bucket,
+    //     region: config.storage_service.oss.region,
+    //     accessKey: config.storage_service.oss.access_key,
+    //     accessKeySecret: config.storage_service.oss.secret_key,
+    //     endpoint: config.storage_service.oss.endpoint,
+    // },
 };
 
 export const User = {

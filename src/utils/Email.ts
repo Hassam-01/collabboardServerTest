@@ -72,6 +72,7 @@ function createSMTPTransport(): EmailClient {
         host: EmailSMS.smtp.host,
         port: EmailSMS.smtp.port,
         secure: EmailSMS.smtp.secure,
+        from: EmailSMS.smtp.from,
         auth: {
             user: EmailSMS.smtp.auth.user,
             pass: EmailSMS.smtp.auth.pass,
@@ -86,7 +87,7 @@ function createSMTPTransport(): EmailClient {
 
             try {
                 resp = await transport.sendMail({
-                    from: EmailSMS.smtp.auth.user,
+                    from: EmailSMS.smtp.from,
                     to,
                     subject,
                     html,
@@ -112,7 +113,7 @@ function createSMTPTransport(): EmailClient {
 
 function createEmailClient(): EmailClient {
     if (EmailSMS.type === "smtp") {
-        console.log("create SMTP transport", EmailSMS.smtp.host, EmailSMS.smtp.port);
+        console.log("create SMTP transport ", EmailSMS.smtp.host, EmailSMS.smtp.port);
         return createSMTPTransport();
     }
     if (EmailSMS.type === "aliCloud") {
@@ -122,15 +123,15 @@ function createEmailClient(): EmailClient {
     throw new Error(`unknown email type: ${EmailSMS.type}`);
 }
 
-function getAccountName(): string {
-    if (EmailSMS.type === "aliCloud") {
-        return EmailSMS.aliCloud.accountName;
-    }
-    if (EmailSMS.type === "smtp") {
-        return EmailSMS.smtp.auth.user;
-    }
-    throw new Error(`unknown email type: ${EmailSMS.type}`);
-}
+// function getAccountName(): string {
+//     if (EmailSMS.type === "aliCloud") {
+//         return EmailSMS.aliCloud.accountName;
+//     }
+//     if (EmailSMS.type === "smtp") {
+//         return EmailSMS.smtp.auth.user;
+//     }
+//     throw new Error(`unknown email type: ${EmailSMS.type}`);
+// }
 
 export class Email {
     private static client: EmailClient = createEmailClient();
@@ -155,7 +156,6 @@ export class Email {
         } = this.options;
 
         this.logger.debug("ready send message");
-
         return Email.client.send(
             tagName,
             this.email,
@@ -168,7 +168,8 @@ export class Email {
     private createLoggerEmail(): Logger<LoggerEmail> {
         return createLoggerEmail({
             email: {
-                accountName: getAccountName(),
+                accountName: EmailSMS.smtp.from,
+                // accountName: getAccountName(),
                 email: this.email,
                 verificationCode: this.verificationCode,
             },
@@ -179,9 +180,9 @@ export class Email {
 export class EmailUtils {
     public static getSubject(_type: "register" | "reset" | "bind", language?: string): string {
         if (language && language.startsWith("zh")) {
-            return "Flat 验证码";
+            return "Collab";
         } else {
-            return "Flat Verification Code";
+            return "Collab Verification Code";
         }
     }
 
@@ -192,18 +193,28 @@ export class EmailUtils {
         language?: string,
     ): string {
         const name = email.split("@")[0];
-        if (language && language.startsWith("zh")) {
-            if (type === "register") {
-                return `${name}，你好！<br><br>感谢注册 <a href="http://flat.whiteboard.agora.io/">Flat 在线教室</a>，请在10分钟内输入验证码：<br><br><h1 style="text-align:center">${code}</h1><br><br>Flat 是一款<a href="https://github.com/netless-io/flat">开源</a>的在线授课软件，专为个人老师设计。我们努力克制保持简单、清爽、专注课中互动体验，希望可以给你带来愉悦的上课体验。<br><br>目前 Flat 正在积极开发中，如果你在使用过程中遇到问题，欢迎联系我进行反馈。它在一天天长大，我们很高兴与你分享这份喜悦。<br><br>Leo Yang<br>Flat 产品经理<br><a href="mailto:yangliu02@agora.io">yangliu02@agora.io</a>`;
-            } else {
-                return `${name}，你好！请在10分钟内输入验证码：<br><br><h1 style="text-align:center">${code}</h1><br><br>目前 Flat 正在积极开发中，如果你在使用过程中遇到问题，欢迎联系我进行反馈。它在一天天长大，我们很高兴与你分享这份喜悦。<br><br>Leo Yang<br>Flat 产品经理<br><a href="mailto:yangliu02@agora.io">yangliu02@agora.io</a>`;
-            }
-        } else {
-            if (type === "register") {
-                return `Hello, ${name}! <br><br>Thank you for registering with <a href="http://flat.whiteboard.agora.io/">Flat Online Classroom</a>. Please enter the verification code within 10 minutes:<br><br><h1 style="text-align:center">${code}</h1><br><br>Flat is an <a href="https://github.com/netless-io/flat">open-source</a> online teaching software designed specifically for freelance teachers. We strive to maintain a simple, refreshing, and focused in-class interactive experience, aiming to provide you with a pleasant teaching experience.<br><br>Currently, Flat is actively under development. If you encounter any issues during usage, please feel free to contact me for feedback. It is growing day by day, and we are delighted to share this joy with you.<br><br>Thanks and Regards,<br>Leo Yang<br>Flat PM<br><a href="mailto:yangliu02@agora.io">yangliu02@agora.io</a>`;
-            } else {
-                return `Hello, ${name}! Please enter the verification code within 10 minutes:<br><br><h1 style="text-align:center">${code}</h1><br><br><Currently, Flat is actively under development. If you encounter any issues during usage, please feel free to contact me for feedback. It is growing day by day, and we are delighted to share this joy with you.<br><br>Thanks and Regards,<br>Leo Yang<br>Flat PM<br><a href="mailto:yangliu02@agora.io">yangliu02@agora.io</a>`;
-            }
+        const supportEmail = "support@onescreensolutions.com";
+        if (language && language.startsWith("espanol")) { 
         }
-    }
-}
+        // const supportLink = `<a href="mailto:${supportEmail}">${supportEmail}</a>`;
+        return `
+<div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; padding: 30px; border-radius: 10px;">
+  <div style="text-align: center; margin-bottom: 20px;">
+    <h2 style="color: #6f3393; margin: 0;">OneScreen Collab</h2>
+    <p style="color: #82C341; margin: 5px 0 0 0; font-weight: bold;">Verification Code</p>
+  </div>
+  <div style="margin-top: 30px; font-size: 16px;">
+    <p>Hello, <strong>${name}</strong>!</p>
+    ${type === "register"
+      ? `<p>Thank you for registering with <strong>OneScreen Collab</strong>. We're excited to have you on board!</p>`
+      : ""}
+    <p>Please enter the following verification code within the next 10 minutes:</p>
+    <div style="text-align: center; margin: 30px 0;">
+      <h1 style="font-size: 36px; color: #6f3393; margin: 0;">${code}</h1>
+    </div>
+    <p>If you have any questions or would like to schedule free training and support, feel free to reach out to us at <a href="mailto:${supportEmail}" style="color: #82C341;">${supportEmail}</a>.</p>
+    <p style="margin-top: 40px;">Best regards,<br><strong>The OneScreen Collab Team</strong></p>
+  </div>
+</div>
+        `;
+    }}

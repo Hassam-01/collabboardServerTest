@@ -15,7 +15,8 @@ export class AliOSSService extends OSSAbstract {
     });
 
     // public readonly domain = `http://${StorageService.oss.bucket}.${StorageService.oss.endpoint}`;
-    public readonly domain = `http://${StorageService.oss.endpoint}`;
+    // public readonly domain = `http://${StorageService.oss.endpoint}`;
+    public readonly domain = `http://$`;
 
     public constructor(private readonly ids: IDS) {
         super();
@@ -143,7 +144,8 @@ export class AliOSSService extends OSSAbstract {
             expiration: addMinutes(expiration)(new Date()).toISOString(),
             conditions: [
                 {
-                    bucket: StorageService.oss.bucket,
+                    // bucket: StorageService.oss.bucket,
+                    bucket: StorageService.s3.bucket,
                 },
                 ["content-length-range", fileSize, fileSize],
                 ["eq", "$key", filePath],
@@ -153,7 +155,8 @@ export class AliOSSService extends OSSAbstract {
 
         const policy = Buffer.from(policyString).toString("base64");
         const signature = crypto
-            .createHmac("sha1", StorageService.oss.accessKeySecret)
+            // .createHmac("sha1", StorageService.oss.accessKeySecret)
+            .createHmac("sha1", StorageService.s3.accessKeySecret)
             .update(policy)
             .digest("base64");
 

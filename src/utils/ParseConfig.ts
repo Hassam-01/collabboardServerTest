@@ -29,6 +29,12 @@ export const configHash = crypto.createHash("md5").update(yamlContent).digest("h
 export const config = yaml.load(yamlContent) as Config;
 
 type Config = {
+    aws:{
+        accessKeyId: string;
+        secretAccessKey: string;
+        region: string;
+        bucket: string;
+    }
     server: {
         port: number;
         env: string;
@@ -156,6 +162,7 @@ type Config = {
                 host: string;
                 port: number;
                 secure: boolean;
+                from: string;
                 auth: {
                     user: string;
                     pass: string;
@@ -219,7 +226,14 @@ type Config = {
         app_id: string;
     };
     storage_service: {
-        type: "oss";
+        type: "s3";
+        s3: {
+            accessKey: string;
+            secretKey: string;
+            // endpoint: string;
+            bucket: string;
+            region: string;
+        };
         oss: {
             access_key: string;
             secret_key: string;
@@ -228,6 +242,16 @@ type Config = {
             region: string;
         };
     };
+    // storage_service: {
+    //     type: "oss";
+    //     oss: {
+    //         access_key: string;
+    //         secret_key: string;
+    //         endpoint: string;
+    //         bucket: string;
+    //         region: string;
+    //     };
+    // };
     censorship: {
         video: {
             enable: boolean;

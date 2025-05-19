@@ -205,7 +205,8 @@ test.serial(`${namespace} - generate policy template`, ava => {
     const data = JSON.parse(Buffer.from(policy, "base64").toString());
 
     ava.is(data.conditions.length, 4);
-    ava.is(data.conditions[0].bucket, StorageService.oss.bucket);
+    // ava.is(data.conditions[0].bucket, StorageService.oss.bucket);
+    ava.is(data.conditions[0].bucket, StorageService.s3.bucket);
     ava.deepEqual(data.conditions[1], ["content-length-range", fileSize, fileSize]);
     ava.deepEqual(data.conditions[2], ["eq", "$key", filePath]);
     ava.deepEqual(data.conditions[3], [

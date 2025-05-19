@@ -139,13 +139,22 @@ login:
       - email:
         code:
     type: smtp
+    # smtp:
+    #   host: smtp-relay.brevo.com
+    #   port: 587
+    #   secure: false
+    #   from: travelbalti@gmail.com
+    #   auth:
+    #     user: 8ae744001@smtp-brevo.com
+    #     pass: fsrzkTbKnJ9y0UPW
     smtp:
-      host: smtp-relay.brevo.com
-      port: 587
-      secure: false
+      host: smtp.gmail.com
+      port: 465
+      from: donotreply@onescreensolutions.com
+      secure: true
       auth:
-        user: 8ae744001@smtp-brevo.com
-        pass: fsrzkTbKnJ9y0UPW
+        user: donotreply@onescreensolutions.com
+        pass: kqrutuolgxsmcnik
 
     aliCloud:
       access_id:
@@ -157,8 +166,8 @@ apple:
 
 agora:
   app:
-    id: "22fe39ad172744f5a9e585b500213fd5"
-    certificate: "c16fc2c533d141618f7669ef8385a708"
+    id: "ba55fafb4ce447579b6cbac71ce252bd"
+    certificate: "887ad3d503aa4dd189efe3da7e07afc1"
   restful:
     id: 
     secret:
@@ -190,27 +199,50 @@ agora:
     server_cn: "http://43.131.39.44:8082"
     server_en: "http://43.131.39.44:8081"
 
+aws:
+  accessKeyId: "AKIAXT4LIWZN5MNZHDOZ"
+  secretAccessKey: "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"
+  bucket: "cbw-os"
+  region: "eu-north-1"
+
 whiteboard:
-  app_id: "ptg2wOleEe-n__HYKx8QBQ/BkCNyhYO8Revwg"
-  access_key: "j-buTYIgsmhHL0Qr"
-  secret_access_key: "mJm7RzKQFb8Lh_ZN_EKdBhelogKAEmhV"
+  app_id: "mkMd4CmzEfCjNLu8MEujCw/LrKLh9qhNad8GQ"
+  access_key: "Eg-HgbGZpswK1bs8"
+  secret_access_key: "60SVPWmC7RMLcsmFIooygYYTFYgeGJfM"
   region: "sg"
   convert_region:  "sg"
 
+# storage_service:
+#   type: oss
+#   oss:
+#     access_key: "myadminMinio"          # MINIO_ROOT_USER
+#     secret_key: "RootPass123" # MINIO_ROOT_PASSWORD
+#     accessKey: "myadminMinio"          # MINIO_ROOT_USER
+#     accessKeySecret: "RootPass123" # MINIO_ROOT_PASSWORD
+#     endpoint: http://127.0.0.1:9000
+#     bucket: flat
+#     region: us-east-1
+#     signature_version: "v4"
+#     secure: false
+#     cname: false
 storage_service:
-  type: oss
-  oss:
-    access_key: "myadminMinio"          # MINIO_ROOT_USER
-    secret_key: "RootPass123" # MINIO_ROOT_PASSWORD
-    accessKey: "myadminMinio"          # MINIO_ROOT_USER
-    accessKeySecret: "RootPass123" # MINIO_ROOT_PASSWORD
-    endpoint: http://127.0.0.1:9000
-    bucket: flat
-    region: us-east-1
-    signature_version: "v4"
-    secure: false
-    cname: false
-    # path_style: true 
+    type: s3  # Changed from "oss"
+    oss: 
+      access_key: "myadminMinio"          # MINIO_ROOT_USER
+      secret_key: "RootPass123" # MINIO_ROOT_PASSWORD
+      accessKey: "myadminMinio"          # MINIO_ROOT_USER
+      accessKeySecret: "RootPass123" # MINIO_ROOT_PASSWORD
+      endpoint: http://127.0.0.1:9000
+      bucket: flat
+      region: us-east-1
+      signature_version: "v4"
+      secure: false
+      cname: false
+    s3:
+        accessKey: "AKIAXT4LIWZN5MNZHDOZ"
+        secretKey: "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"
+        bucket: "cbw-os"
+        region: "eu-north-1"  # AWS region
 
 censorship:
   video:

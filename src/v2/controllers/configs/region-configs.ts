@@ -111,11 +111,17 @@ export const regionConfigs = async (): Promise<ResponseSuccess<regionConfigsResp
         google: {
             clientId: Google.clientId,
         },
+        // cloudStorage: {
+        //     singleFileSize: CloudStorage.singleFileSize,
+        //     totalSize: CloudStorage.totalSize,
+        //     allowFileSuffix: CloudStorage.allowFileSuffix,
+        //     accessKey: StorageService.oss.accessKey,
+        // },
         cloudStorage: {
             singleFileSize: CloudStorage.singleFileSize,
             totalSize: CloudStorage.totalSize,
             allowFileSuffix: CloudStorage.allowFileSuffix,
-            accessKey: StorageService.oss.accessKey,
+            accessKey: StorageService.s3.accessKey,
         },
         censorship: {
             video: Censorship.video.enable,

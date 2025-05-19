@@ -1,18 +1,21 @@
 import OSS from "ali-oss";
 import { StorageService } from "../../../constants/Config";
 
+// export const aliOSSClient = new OSS({
+//     bucket: StorageService.oss.bucket,
+//     region: StorageService.oss.region,
+//     endpoint: StorageService.oss.endpoint,
+//     accessKeyId: StorageService.oss.accessKey,
+//     accessKeySecret: StorageService.oss.accessKeySecret,
+//     secure: true,
+// });
 export const aliOSSClient = new OSS({
-    bucket: StorageService.oss.bucket,
-    region: StorageService.oss.region,
-    endpoint: StorageService.oss.endpoint,
-    accessKeyId: StorageService.oss.accessKey,
-    accessKeySecret: StorageService.oss.accessKeySecret,
+    bucket: StorageService.s3.bucket,
+    region: StorageService.s3.region,
+    // endpoint: StorageService.s3.endpoint,
+    accessKeyId: StorageService.s3.accessKey,
+    accessKeySecret: StorageService.s3.accessKeySecret,
     secure: true,
-    // cname: false,
-    // // signatureVersion: "v4",
-    // s3ForcePathStyle: true,
-    // s3BucketEndpoint: false,
-    // signatureAlgorithm: "AWS4-HMAC-SHA256",
 });
 
 // import { S3Client } from "@aws-sdk/client-s3";

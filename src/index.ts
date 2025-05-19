@@ -22,6 +22,7 @@ import fastifyTypeORMQueryRunner from "@fastify-userland/typeorm-query-runner";
 import { fastifyAPILogger } from "./plugins/fastify/api-logger";
 import { initTasks } from "./v2/tasks";
 import { fastifyAuthenticate } from "./plugins/fastify/authenticate";
+import { getS3PresignedURL } from "./aws-s3/S3Controller";
 // import fs from "fs";
 const app = fastify({
     // https: {
@@ -37,6 +38,8 @@ const app = fastify({
 if (MetricsConfig.enabled) {
     new MetricsSever(app).start();
 }
+app.post("/s3/presigned-url", getS3PresignedURL);
+// app.get("/", getS3PresignedURL);
 
 app.setErrorHandler((err, request, reply) => {
     if (err.validation) {

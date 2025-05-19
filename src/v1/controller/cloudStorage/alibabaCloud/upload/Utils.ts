@@ -1,5 +1,6 @@
 import { CloudStorageConfigsDAO } from "../../../../../dao";
-import { CloudStorage, StorageService } from "../../../../../constants/Config";
+import { CloudStorage, StorageService  } from "../../../../../constants/Config";
+// import { CloudStorage, StorageService } from "../../../../../constants/Config";
 import path from "path";
 import { format } from "date-fns/fp";
 
@@ -32,8 +33,10 @@ export const getFilePath = (fileName: string, fileUUID: string): string => {
 
 export const getOSSDomain = (): string => {
     // return `https://${StorageService.oss.endpoint}`;
-    console.log("StorageService.oss.endpoint", StorageService.oss.endpoint);
-    return `http://${StorageService.oss.endpoint}`;
+    // return `http://${StorageService.oss.endpoint}`;
+    // console.log("StorageService.s3.endpoint", StorageService.s3.endpoint);
+    return `https://${StorageService.s3.bucket}.s3.${StorageService.s3.region}.amazonaws.com`;
+    // return "hello: string"
 };
 
 export const getOSSFileURLPath = (filePath: string): string => {

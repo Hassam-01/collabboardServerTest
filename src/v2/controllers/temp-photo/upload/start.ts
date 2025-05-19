@@ -30,17 +30,16 @@ export const tempPhotoUploadStart = async (
 ): Promise<Response<Static<typeof uploadStartReturnSchema>>> => {
     const complianceText = useOnceService("complianceText", req.ids);
     await complianceText.assertTextNormal(req.body.fileName);
-
+    
     const cloudStorageUploadSVC = new CloudStorageUploadService(
         req.ids,
         req.DBTransaction,
         req.userUUID,
     );
-
+    
     const result = await cloudStorageUploadSVC.tempPhotoStart({
         fileName: req.body.fileName,
         fileSize: req.body.fileSize,
     });
-
     return successJSON(result);
 };
