@@ -209,7 +209,17 @@ login:
             access_secret:
             template_code:
             sign_name:
-
+         email:
+    enable: true
+    type: smtp
+    smtp:
+      host:
+      port: 
+      from: # same as user
+      secure: 
+      auth:
+        user: 
+        pass: 
 agora:
     # For RTC and RTM. See: https://docs.agora.io/en/Agora%20Platform/get_appid_token?platform=All%20Platforms
     app:
